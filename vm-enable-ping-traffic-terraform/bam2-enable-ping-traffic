@@ -1,0 +1,93 @@
+#############################################################################################################################################################
+# Be A Man Challenge 2 (2/2)
+# Create a VM that is also a web server within your custom VPC. Ensure that your VPC connection information shows on the web page. 
+# The web page also needs a picture of something.
+# Screenshots: one of the VPC subnet information, and one of the up and running GCP web server, accessible in a browser, over its public IP address
+#############################################################################################################################################################
+
+#VPC network
+resource "google_compute_network" "mainvpc" {
+  name                            = "mainvpc"
+  routing_mode                    = "REGIONAL"
+  auto_create_subnetworks         = false
+  mtu                             = 1460
+  delete_default_routes_on_create = false
+
+}
+
+#Firewall Rule
+resource "google_compute_firewall" "allow-ssh" {
+  name    = "allow-ssh"
+  network = google_compute_network.mainvpc.name
+
+  allow {
+    protocol      = "tcp"
+    ports         = ["22"]
+  }
+
+  allow {
+    protocol      = "tcp"
+    ports         = ["80"]
+    
+  }
+source_ranges = ["0.0.0.0/0"]
+}
+
+#Subnet
+resource "google_compute_subnetwork" "saopaulojermaine" {
+  name                     = "saopaulojermaine"
+  ip_cidr_range            = "10.45.25.0/24"
+  region                   = "southamerica-east1"
+  network                  = google_compute_network.mainvpc.id
+  private_ip_google_access = true
+}
+resource "google_compute_subnetwork" "africajeffery" {
+  name                     = "africajeffery"
+  ip_cidr_range            = "10.45.45.0/24"
+  region                   = "africa-south1"
+  network                  = google_compute_network.mainvpc.id
+  private_ip_google_access = true
+}
+
+#VM Instance
+resource "google_compute_instance" "this" {
+name = "saopaulohq"
+machine_type = "e2-small"
+zone = "southamerica-east1-b"
+allow_stopping_for_update = true
+
+boot_disk {
+    initialize_params {
+        image = "debian-cloud/debian-11"
+ }
+}
+network_interface {
+network = google_compute_network.mainvpc.name
+subnetwork = google_compute_subnetwork.saopaulojermaine.name
+access_config {
+
+    }
+  }
+  metadata_startup_script = file("${path.module}/startup.sh")
+}
+
+resource "google_compute_instance" "that" {
+name = "africahq"
+machine_type = "e2-small"
+zone = "africa-south1-b"
+allow_stopping_for_update = true
+
+boot_disk {
+    initialize_params {
+        image = "debian-cloud/debian-11"
+ }
+}
+network_interface {
+network = google_compute_network.mainvpc.name
+subnetwork = google_compute_subnetwork.africajeffery.name
+access_config {
+
+    }
+  }
+  metadata_startup_script = file("${path.module}/startup.sh")
+}
