@@ -1,8 +1,8 @@
 # Google Cloud Projects
 ## Basic GCP architecture provisioned with Terraform.
-<p> Listed below are the projects w/ links </p>
+<p> Listed below are the projects</p>
 
-# 1. Basic Firewall Rules - Terraform
+# 1. Basic Firewall Rules - Terraform 
 <p>basic-firewall-rules.tf</p>
 
 # 2. VM Web Server - Terraform
@@ -14,5 +14,5 @@
 # 4. Firewall Tagging - Terraform
 <p>firewall-tagging-terraform.tf</p>
 
-# 5. VM Enable Ping Traffic - Terraform
+# 5. VM Enable Ping Traffic - [Terraform]
 <p>vm-enable-ping-traffic-terraform.tf</p>
